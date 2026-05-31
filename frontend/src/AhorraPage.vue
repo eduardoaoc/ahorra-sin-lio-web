@@ -1,5 +1,5 @@
 <script setup>
-import familyImage from './assets/images/family.jpg'
+import familyImage from './assets/images/card-image-ahorra-happy-woman.jpg'
 import simpleProcessImage from './assets/images/simple-process.jpg'
 import womanImage from './assets/images/woman.jpg'
 import happyWomanImage from './assets/images/happy-woman.png'
@@ -509,9 +509,45 @@ body {
 
 .ahorra-scope-footer .footer {
   background:
-    radial-gradient(circle at 12% 18%, rgba(0, 212, 126, 0.1), transparent 30%),
-    radial-gradient(circle at 82% 26%, rgba(18, 200, 216, 0.1), transparent 28%),
-    linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+    radial-gradient(circle at 12% 16%, rgba(0, 127, 115, 0.42), transparent 30%),
+    radial-gradient(circle at 86% 20%, rgba(5, 141, 164, 0.34), transparent 28%),
+    linear-gradient(135deg, #007f73 0%, #111f67 48%, #058da4 100%);
+}
+
+.ahorra-scope-footer .footer::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(0, 127, 115, 0.18), transparent 22%),
+    radial-gradient(circle at 75% 62%, rgba(5, 141, 164, 0.22), transparent 24%);
+  animation: moveBg 14s ease-in-out infinite alternate;
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.ahorra-scope-footer .footer-main {
+  position: relative;
+  z-index: 1;
+}
+
+.ahorra-scope-footer .footer-bottom {
+  background: transparent;
+}
+
+.ahorra-scope-footer .brand-text,
+.ahorra-scope-footer .col h3,
+.ahorra-scope-footer .links a,
+.ahorra-scope-footer .consent,
+.ahorra-scope-footer .copy,
+.ahorra-scope-footer .legal,
+.ahorra-scope-footer .legal a {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.ahorra-scope-footer .links a:hover,
+.ahorra-scope-footer .legal a:hover {
+  color: #ffffff !important;
 }
 
 @media (max-width: 920px) {

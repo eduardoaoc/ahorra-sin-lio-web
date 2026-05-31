@@ -1584,7 +1584,15 @@ function AhorraPage() {
           className="ahorra-scope-footer"
           style={{ minHeight: 'auto', fontFamily: APPLE_FONT_STACK }}
         >
-          <footer className="footer" aria-label="Pie de página">
+          <footer
+            className="footer"
+            aria-label="Pie de página"
+            style={{
+              backgroundColor: '#111f67',
+              backgroundImage:
+                'radial-gradient(circle at 12% 18%, rgba(0, 127, 115, 0.42), transparent 30%), radial-gradient(circle at 82% 24%, rgba(5, 141, 164, 0.34), transparent 28%), linear-gradient(135deg, #007f73 0%, #111f67 48%, #058da4 100%)',
+            }}
+          >
             <div className="footer-main" style={{ paddingBottom: 'clamp(20px, 3vw, 36px)' }}>
               <div className="brand">
                 <a href="#" aria-label="Ahorra Sin Líos">
@@ -1674,7 +1682,14 @@ function AhorraPage() {
               </nav>
             </div>
 
-            <div className="footer-bottom">
+            <div
+              className="footer-bottom"
+              style={{
+                backgroundColor: '#111f67',
+                backgroundImage:
+                  'radial-gradient(circle at 12% 12%, rgba(0, 127, 115, 0.46), transparent 26%), radial-gradient(circle at 86% 20%, rgba(5, 141, 164, 0.38), transparent 26%), linear-gradient(135deg, #007f73 0%, #111f67 48%, #058da4 100%)',
+              }}
+            >
               <div className="bottom-inner">
                 <p className="copy">© 2024 Ahorra Sin Líos</p>
 
