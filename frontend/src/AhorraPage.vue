@@ -1,4 +1,5 @@
 <script setup>
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import familyImage from './assets/images/card-image-ahorra-happy-woman.jpg'
 import simpleProcessImage from './assets/images/simple-process.jpg'
 import womanImage from './assets/images/woman.jpg'
@@ -214,6 +215,115 @@ body {
   line-height: 1 !important;
 }
 
+.ahorra-page {
+  --asl-pill-pad-y: clamp(9px, 1vw, 11px);
+  --asl-pill-pad-x: clamp(14px, 1.7vw, 18px);
+  --asl-pill-gap: 10px;
+  --asl-pill-border: rgba(255,255,255,.28);
+  --asl-pill-bg:
+    linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,255,255,.18) 54%, rgba(255,255,255,.12));
+  --asl-pill-shadow:
+    0 16px 40px rgba(7,24,39,.14),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  --asl-pill-dot: #00d47e;
+  --asl-pill-dot-glow: rgba(0,212,126,.24);
+  --asl-pill-dot-ring: rgba(0,212,126,.16);
+  --asl-pill-blur: 18px;
+}
+
+.ahorra-page .asl-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--asl-pill-gap) !important;
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--asl-pill-pad-y) var(--asl-pill-pad-x) !important;
+  border: 1px solid var(--asl-pill-border) !important;
+  border-radius: 999px !important;
+  background: var(--asl-pill-bg) !important;
+  backdrop-filter: blur(var(--asl-pill-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--asl-pill-blur)) !important;
+  box-shadow: var(--asl-pill-shadow) !important;
+  white-space: normal;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background .18s ease !important;
+}
+
+.ahorra-page .asl-pill::before {
+  content: none !important;
+}
+
+.ahorra-page .asl-pill__dot,
+.ahorra-page .asl-pill .dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--asl-pill-dot) !important;
+  box-shadow:
+    0 0 0 5px var(--asl-pill-dot-ring),
+    0 0 18px var(--asl-pill-dot-glow);
+  animation: asl-pill-dot-pulse 2.8s ease-in-out infinite;
+}
+
+.ahorra-page .asl-pill__dot::after,
+.ahorra-page .asl-pill .dot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(0,212,126,.28), transparent 72%);
+  opacity: .6;
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+@keyframes asl-pill-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 5px var(--asl-pill-dot-ring),
+      0 0 14px var(--asl-pill-dot-glow);
+    opacity: .94;
+  }
+
+  50% {
+    transform: scale(1.14);
+    box-shadow:
+      0 0 0 8px rgba(0,212,126,.08),
+      0 0 20px rgba(0,212,126,.3);
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ahorra-page .asl-pill:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 20px 48px rgba(7,24,39,.16),
+      inset 0 1px 0 rgba(255,255,255,.22) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ahorra-page .asl-pill {
+    transition: none !important;
+  }
+
+  .ahorra-page .asl-pill__dot,
+  .ahorra-page .asl-pill .dot {
+    animation: none !important;
+    box-shadow:
+      0 0 0 4px rgba(0,212,126,.12),
+      0 0 10px rgba(0,212,126,.18) !important;
+  }
+}
+
 .ahorra-scope-clientes-faixa .brand-word {
   font-weight: 700 !important;
   letter-spacing: -0.03em !important;
@@ -247,6 +357,11 @@ body {
 }
 
 @media (max-width: 768px) {
+  .ahorra-page .asl-pill {
+    --asl-pill-pad-y: 9px;
+    --asl-pill-pad-x: 14px;
+  }
+
   .ahorra-scope-hero h1 {
     font-size: clamp(38px, 12vw, 52px) !important;
     line-height: 0.95 !important;
@@ -507,6 +622,29 @@ body {
   }
 }
 
+.ahorra-page-host[data-process-enhanced='true'] .ahorra-scope-como-funciona .step[data-scroll-step] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.ahorra-page-host[data-process-enhanced='true'] .ahorra-scope-como-funciona .step[data-scroll-step].is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ahorra-page-host[data-process-enhanced='true'] .ahorra-scope-como-funciona .step[data-scroll-step] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
 .ahorra-scope-footer .footer {
   background:
     radial-gradient(circle at 12% 16%, rgba(0, 127, 115, 0.42), transparent 30%),
@@ -563,6 +701,89 @@ body {
 }
 `
 
+const hostRef = ref(null)
+
+let processStepObserver
+
+const revealProcessStep = (step) => {
+  step.classList.add('is-revealed')
+}
+
+const revealAllProcessSteps = (steps) => {
+  steps.forEach(revealProcessStep)
+}
+
+const setupProcessStepReveal = () => {
+  const host = hostRef.value
+
+  if (!host) {
+    return
+  }
+
+  const steps = Array.from(
+    host.querySelectorAll('.ahorra-scope-como-funciona .step[data-scroll-step]')
+  )
+
+  if (!steps.length) {
+    return
+  }
+
+  if (
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    !('IntersectionObserver' in window)
+  ) {
+    revealAllProcessSteps(steps)
+    return
+  }
+
+  let nextStepToReveal = 0
+
+  const flushPendingSteps = () => {
+    while (nextStepToReveal < steps.length) {
+      const step = steps[nextStepToReveal]
+
+      if (!step.classList.contains('is-pending-reveal')) {
+        break
+      }
+
+      step.classList.remove('is-pending-reveal')
+      revealProcessStep(step)
+      nextStepToReveal += 1
+    }
+  }
+
+  processStepObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return
+        }
+
+        entry.target.classList.add('is-pending-reveal')
+        processStepObserver?.unobserve(entry.target)
+      })
+
+      flushPendingSteps()
+    },
+    {
+      threshold: 0.65,
+      rootMargin: '0px 0px -42% 0px',
+    }
+  )
+
+  steps.forEach((step) => {
+    processStepObserver?.observe(step)
+  })
+}
+
+onMounted(() => {
+  setupProcessStepReveal()
+})
+
+onBeforeUnmount(() => {
+  processStepObserver?.disconnect()
+})
+
 const PAGE_STYLES = `${AHORRA_PAGE_STYLES}\n${AHORRA_PAGE_LAYOUT_FIXES}`
 
 const markup = `<div class="ahorra-page">
@@ -610,16 +831,20 @@ const markup = `<div class="ahorra-page">
 
               <section class="hero-content">
                 <div class="copy">
-                  <p class="eyebrow">Ahorro real en energía</p>
-                  <h1 id="hero-title">Ahorra energía sin líos</h1>
+                  <p class="eyebrow asl-pill">
+                    <span class="asl-pill__dot" aria-hidden="true"></span>
+                    Ahorro real en energía
+                  </p>
+                  <h1 id="hero-title">Empieza a ahorrar en tu factura de luz</h1>
                   <p class="lead">
-                    Encontramos una tarifa energética más clara y económica para que ahorres de
-                    verdad, sin papeleo ni complicaciones.
+                    Puedes seguir pagando de más cada mes o tomar el control de tu factura en 2 minutos.
+                    <br /><br />
+                    Usa nuestro comparador energético o deja que un asesor revise tu caso gratis, sin papeleo y sin compromiso.
                   </p>
 
                   <div class="cta-row" aria-label="Acciones principales">
                     <a class="cta primary" href="#">
-                      Comparar mi tarifa <span class="cta-icon">→</span>
+                      Analizar mi factura gratis <span class="cta-icon">→</span>
                     </a>
                     <a class="cta secondary" href="#">
                       Hablar con un asesor <span class="cta-icon">☎</span>
@@ -650,7 +875,10 @@ const markup = `<div class="ahorra-page">
               <div class="benefits-container">
                 <div class="benefits-top">
                   <div class="benefits-copy">
-                    <span class="section-kicker">Vive la energía que mereces</span>
+                    <span class="section-kicker asl-pill">
+                      <span class="asl-pill__dot" aria-hidden="true"></span>
+                      Vive la energía que mereces
+                    </span>
                     <h1 class="benefits-title" id="benefits-title">
                       ¡Tú eliges, tú ahorras, tú ganas!
                     </h1>
@@ -669,10 +897,10 @@ const markup = `<div class="ahorra-page">
                         </svg>
                       </div>
                       <div>
-                        <h3>Ahorro. Un objetivo, con diferentes caminos</h3>
+                        <h3>Ahorro adaptado a tu hogar o negocio</h3>
                         <p>
-                          Maximizamos tu ahorro energético con soluciones personalizadas, rápidas y
-                          eficientes. ¡Análisis de factura gratis!
+                          Analizamos tu caso y buscamos la compañía energética que mejor se adapte
+                          a tus necesidades para ayudarte a pagar menos.
                         </p>
                       </div>
                     </article>
@@ -691,10 +919,10 @@ const markup = `<div class="ahorra-page">
                         </svg>
                       </div>
                       <div>
-                        <h3>Calidad. Las mejores compañías de luz</h3>
+                        <h3>Calidad con precios claros</h3>
                         <p>
-                          Trabajamos con comercializadoras del mercado para garantizarte acceso a
-                          productos claros, competitivos y adaptados a ti.
+                          Trabajamos con soluciones energéticas claras, compañías de confianza y
+                          condiciones transparentes desde el primer momento.
                         </p>
                       </div>
                     </article>
@@ -713,10 +941,10 @@ const markup = `<div class="ahorra-page">
                         </svg>
                       </div>
                       <div>
-                        <h3>Contigo. De principio a fin</h3>
+                        <h3>Un asesor real contigo de principio a fin</h3>
                         <p>
-                          Disfruta de un servicio integral y fiable, con un equipo experto
-                          disponible para ayudarte en todas tus necesidades y trámites.
+                          Recibes atención gratuita de una persona real, que revisa tu caso,
+                          resuelve tus dudas y te acompaña durante todo el proceso.
                         </p>
                       </div>
                     </article>
@@ -748,10 +976,10 @@ const markup = `<div class="ahorra-page">
                     />
                   </div>
                   <figcaption
-                    class="media-badge"
-                    style='left: clamp(24px, 4vw, 36px); bottom: clamp(24px, 4vw, 36px); padding: 12px 18px; background: rgba(7, 24, 39, 0.42); border: 1px solid rgba(255,255,255,.26); box-shadow: 0 18px 44px rgba(7, 24, 39, 0.18), inset 0 1px 0 rgba(255,255,255,.18)'
+                    class="media-badge asl-pill"
+                    style='left: clamp(24px, 4vw, 36px); bottom: clamp(24px, 4vw, 36px)'
                   >
-                    <span aria-hidden="true"></span>Ahorra sin complicaciones
+                    <span class="asl-pill__dot" aria-hidden="true"></span>Ahorra sin complicaciones
                   </figcaption>
                 </figure>
               </div>
@@ -763,8 +991,8 @@ const markup = `<div class="ahorra-page">
           <section class="services-section" aria-labelledby="services-title">
             <div class="container">
               <header class="section-header">
-                <div class="eyebrow">
-                  <span aria-hidden="true"></span>
+                <div class="eyebrow asl-pill">
+                  <span class="asl-pill__dot" aria-hidden="true"></span>
                   Soluciones para ahorrar más
                 </div>
 
@@ -1283,17 +1511,20 @@ const markup = `<div class="ahorra-page">
               </div>
 
               <div class="content">
-                <p class="kicker">Proceso simple</p>
+                <p class="kicker asl-pill">
+                  <span class="asl-pill__dot" aria-hidden="true"></span>
+                  Proceso simple
+                </p>
 
                 <h2 id="process-title">Ahorrar sin líos empieza aquí</h2>
 
                 <p class="intro">
-                  Un proceso claro, humano y rápido para encontrar una mejor opción energética sin
-                  que tengas que complicarte.
+                  En 5 pasos simples revisamos tu factura, comparamos opciones y te ayudamos a
+                  cambiar a una solución más clara, cómoda y sin coste para ti.
                 </p>
 
                 <ol class="steps">
-                  <li class="step">
+                  <li class="step" data-scroll-step>
                     <span class="num">1</span>
                     <div>
                       <h3>Nos envías tu factura</h3>
@@ -1304,7 +1535,7 @@ const markup = `<div class="ahorra-page">
                     </div>
                   </li>
 
-                  <li class="step">
+                  <li class="step" data-scroll-step>
                     <span class="num">2</span>
                     <div>
                       <h3>Analizamos la mejor opción</h3>
@@ -1315,7 +1546,7 @@ const markup = `<div class="ahorra-page">
                     </div>
                   </li>
 
-                  <li class="step">
+                  <li class="step" data-scroll-step>
                     <span class="num">3</span>
                     <div>
                       <h3>Te presentamos el estudio</h3>
@@ -1325,7 +1556,7 @@ const markup = `<div class="ahorra-page">
                     </div>
                   </li>
 
-                  <li class="step">
+                  <li class="step" data-scroll-step>
                     <span class="num">4</span>
                     <div>
                       <h3>Gestionamos tu contrato</h3>
@@ -1336,13 +1567,13 @@ const markup = `<div class="ahorra-page">
                     </div>
                   </li>
 
-                  <li class="step">
+                  <li class="step" data-scroll-step>
                     <span class="num">5</span>
                     <div>
-                      <h3>Ya estás Ahorrando Sin Líos</h3>
+                      <h3>Ya empiezas a ahorrar sin líos</h3>
                       <p>
-                        Empiezas a ahorrar con una tarifa más adecuada y con acompañamiento cuando
-                        lo necesites.
+                        Disfrutas de una tarifa más adecuada, con acompañamiento personalizado y
+                        un servicio completamente gratis para ti.
                       </p>
                     </div>
                   </li>
@@ -1356,7 +1587,10 @@ const markup = `<div class="ahorra-page">
           <section class="newsletter" aria-labelledby="newsletter-title">
             <div class="wrap">
               <div class="copy">
-                <p class="kicker">Consejos y ahorro</p>
+                <p class="kicker asl-pill">
+                  <span class="asl-pill__dot" aria-hidden="true"></span>
+                  Consejos y ahorro
+                </p>
 
                 <h2 id="newsletter-title">Ahorro, noticias y energía simple</h2>
 
@@ -1455,8 +1689,8 @@ const markup = `<div class="ahorra-page">
         <div class="ahorra-scope-resenas" style='font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif'>
           <section class="reviews" aria-labelledby="reviews-title">
             <div class="head">
-              <div class="kicker">
-                <span class="dot" aria-hidden="true"></span>
+              <div class="kicker asl-pill">
+                <span class="dot asl-pill__dot" aria-hidden="true"></span>
                 Opiniones reales
               </div>
 
@@ -1698,7 +1932,10 @@ const markup = `<div class="ahorra-page">
             <div class="wrap">
               <div class="left-panel">
                 <div class="content">
-                  <p class="kicker">Oferta personalizada</p>
+                  <p class="kicker asl-pill">
+                    <span class="asl-pill__dot" aria-hidden="true"></span>
+                    Oferta personalizada
+                  </p>
 
                   <h2 id="quote-title">
                     Sube tu factura y recibe
@@ -1941,6 +2178,6 @@ const markup = `<div class="ahorra-page">
 </script>
 
 <template>
-  <component :is="'style'" v-text="PAGE_STYLES" />
-  <div class="ahorra-page-host" v-html="markup"></div>
+  <component :is="'style'">{{ PAGE_STYLES }}</component>
+  <div ref="hostRef" class="ahorra-page-host" data-process-enhanced="true" v-html="markup"></div>
 </template>
