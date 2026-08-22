@@ -248,11 +248,6 @@ body {
   -webkit-backdrop-filter: blur(var(--asl-pill-blur)) !important;
   box-shadow: var(--asl-pill-shadow) !important;
   white-space: normal;
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease,
-    background .18s ease !important;
 }
 
 .ahorra-page .asl-pill::before {
@@ -270,7 +265,11 @@ body {
   box-shadow:
     0 0 0 5px var(--asl-pill-dot-ring),
     0 0 18px var(--asl-pill-dot-glow);
-  animation: asl-pill-dot-pulse 2.8s ease-in-out infinite;
+}
+
+.ahorra-page .pill-dot {
+  animation: pillDotPulse 1.8s ease-in-out infinite;
+  transform-origin: center;
 }
 
 .ahorra-page .asl-pill__dot::after,
@@ -285,45 +284,28 @@ body {
   pointer-events: none;
 }
 
-@keyframes asl-pill-dot-pulse {
+@keyframes pillDotPulse {
   0%,
   100% {
     transform: scale(1);
     box-shadow:
-      0 0 0 5px var(--asl-pill-dot-ring),
-      0 0 14px var(--asl-pill-dot-glow);
-    opacity: .94;
+      0 0 0 0 rgba(0,212,126,.42),
+      0 0 10px rgba(0,212,126,.58);
+    opacity: 1;
   }
 
   50% {
-    transform: scale(1.14);
+    transform: scale(1.15);
     box-shadow:
-      0 0 0 8px rgba(0,212,126,.08),
-      0 0 20px rgba(0,212,126,.3);
-    opacity: 1;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .ahorra-page .asl-pill:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      0 20px 48px rgba(7,24,39,.16),
-      inset 0 1px 0 rgba(255,255,255,.22) !important;
+      0 0 0 6px rgba(0,212,126,0),
+      0 0 18px rgba(0,212,126,.86);
+    opacity: .72;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ahorra-page .asl-pill {
-    transition: none !important;
-  }
-
-  .ahorra-page .asl-pill__dot,
-  .ahorra-page .asl-pill .dot {
+  .ahorra-page .pill-dot {
     animation: none !important;
-    box-shadow:
-      0 0 0 4px rgba(0,212,126,.12),
-      0 0 10px rgba(0,212,126,.18) !important;
   }
 }
 
@@ -807,7 +789,7 @@ const AHORRA_NEW_SECTIONS_STYLES = `
 .ahorra-scope-equipazo .equipazo-copy { padding:70px 0 100px; position:relative; z-index:4; }
 .ahorra-scope-equipazo .equipazo-eyebrow, .ahorra-scope-planes .plans-eyebrow { display:inline-flex; align-items:center; gap:9px; padding:7px 13px; border-radius:999px; font-size:12px; font-weight:800; }
 .ahorra-scope-equipazo .equipazo-eyebrow { margin-bottom:20px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.13); color:#e6fffa; backdrop-filter:blur(10px); }
-.ahorra-scope-equipazo .equipazo-eyebrow i, .ahorra-scope-planes .plans-eyebrow i { width:7px; height:7px; border-radius:50%; background:#00c99a; box-shadow:0 0 0 6px rgba(0,201,154,.1); }
+.ahorra-scope-equipazo .equipazo-eyebrow i, .ahorra-scope-planes .plans-eyebrow i { width:7px; height:7px; flex-shrink:0; border-radius:50%; background:#00c99a; box-shadow:0 0 0 6px rgba(0,201,154,.1); }
 .ahorra-scope-equipazo h2 { margin:0 0 22px; font-size:clamp(58px,6vw,88px); line-height:.9; letter-spacing:-.055em; font-weight:850; }
 .ahorra-scope-equipazo .equipazo-lead { max-width:460px; margin:0 0 30px; font-size:17px; line-height:1.62; color:#d0dfeb; }
 .ahorra-scope-equipazo .equipazo-ratings { display:grid; gap:12px; max-width:480px; }
@@ -915,7 +897,7 @@ const markup = `<div class="ahorra-page">
               <section class="hero-content">
                 <div class="copy">
                   <p class="eyebrow asl-pill">
-                    <span class="asl-pill__dot" aria-hidden="true"></span>
+                    <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                     Ahorro real en energía
                   </p>
                   <h1 id="hero-title">Empieza a ahorrar en tu factura de luz</h1>
@@ -959,7 +941,7 @@ const markup = `<div class="ahorra-page">
                 <div class="benefits-top">
                   <div class="benefits-copy">
                     <span class="section-kicker asl-pill">
-                      <span class="asl-pill__dot" aria-hidden="true"></span>
+                      <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                       Vive la energía que mereces
                     </span>
                     <h1 class="benefits-title" id="benefits-title">
@@ -1062,7 +1044,7 @@ const markup = `<div class="ahorra-page">
                     class="media-badge asl-pill"
                     style='left: clamp(24px, 4vw, 36px); bottom: clamp(24px, 4vw, 36px)'
                   >
-                    <span class="asl-pill__dot" aria-hidden="true"></span>Ahorra sin complicaciones
+                    <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>Ahorra sin complicaciones
                   </figcaption>
                 </figure>
               </div>
@@ -1075,7 +1057,7 @@ const markup = `<div class="ahorra-page">
             <div class="container">
               <header class="section-header">
                 <div class="eyebrow asl-pill">
-                  <span class="asl-pill__dot" aria-hidden="true"></span>
+                  <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                   Soluciones para ahorrar más
                 </div>
 
@@ -1595,7 +1577,7 @@ const markup = `<div class="ahorra-page">
 
               <div class="content">
                 <p class="kicker asl-pill">
-                  <span class="asl-pill__dot" aria-hidden="true"></span>
+                  <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                   Proceso simple
                 </p>
 
@@ -1671,7 +1653,7 @@ const markup = `<div class="ahorra-page">
             <div class="wrap">
               <div class="copy">
                 <p class="kicker asl-pill">
-                  <span class="asl-pill__dot" aria-hidden="true"></span>
+                  <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                   Consejos y ahorro
                 </p>
 
@@ -1773,7 +1755,7 @@ const markup = `<div class="ahorra-page">
           <section class="reviews" aria-labelledby="reviews-title">
             <div class="head">
               <div class="kicker asl-pill">
-                <span class="dot asl-pill__dot" aria-hidden="true"></span>
+                <span class="dot asl-pill__dot pill-dot" aria-hidden="true"></span>
                 Opiniones reales
               </div>
 
@@ -2013,7 +1995,7 @@ const markup = `<div class="ahorra-page">
             <div class="equipazo-glow two" aria-hidden="true"></div>
             <div class="equipazo-inner">
               <div class="equipazo-copy">
-                <div class="equipazo-eyebrow"><i aria-hidden="true"></i> Personas que suman</div>
+                <div class="equipazo-eyebrow"><i class="pill-dot" aria-hidden="true"></i> Personas que suman</div>
                 <h2 id="equipazo-title">EQUIPAZO</h2>
                 <p class="equipazo-lead">Un equipo cercano, resolutivo y comprometido contigo. Escuchamos lo que necesitas y buscamos siempre la solución que más te conviene.</p>
                 <div class="equipazo-ratings">
@@ -2035,7 +2017,7 @@ const markup = `<div class="ahorra-page">
           <section class="plans-section" aria-labelledby="plans-title">
             <div class="plans-container">
               <header class="plans-head">
-                <div class="plans-eyebrow"><i aria-hidden="true"></i> Ventajas por estar con nosotros</div>
+                <div class="plans-eyebrow"><i class="pill-dot" aria-hidden="true"></i> Ventajas por estar con nosotros</div>
                 <h2 id="plans-title">Ahorrar también tiene premio</h2>
                 <p>Te damos más motivos para seguir ahorrando: comparte, quédate y disfruta de ventajas pensadas para nuestros clientes.</p>
               </header>
@@ -2079,7 +2061,7 @@ const markup = `<div class="ahorra-page">
               <div class="left-panel">
                 <div class="content">
                   <p class="kicker asl-pill">
-                    <span class="asl-pill__dot" aria-hidden="true"></span>
+                    <span class="asl-pill__dot pill-dot" aria-hidden="true"></span>
                     Oferta personalizada
                   </p>
 
