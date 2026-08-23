@@ -5,6 +5,9 @@ DirectoryIndex frontend/dist/index.html
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Send API requests to Laravel while keeping backend sources inaccessible.
+    RewriteRule ^api(?:/.*)?$ backend/public/index.php [L,QSA]
+
     # Do not expose application source or rewrite files already being served.
     RewriteRule ^(?:backend|frontend/(?:src|node_modules))(?:/|$) - [F,L,NC]
     RewriteRule ^frontend/dist/ - [L,NC]

@@ -689,6 +689,7 @@ body {
 const hostRef = ref(null)
 
 let processStepObserver
+let contactFormCleanup
 
 const revealProcessStep = (step) => {
   step.classList.add('is-revealed')
@@ -761,12 +762,148 @@ const setupProcessStepReveal = () => {
   })
 }
 
+const CONTACT_ENDPOINT = '/api/contact'
+const WHATSAPP_URL = 'https://wa.me/34671941990'
+const MAX_INVOICE_SIZE = 10 * 1024 * 1024
+const ALLOWED_INVOICE_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+const ALLOWED_INVOICE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp']
+
+const buildWhatsAppMessage = ({ nombre, apellido, correo, movil, mensaje, hasInvoice }) => {
+  const fullName = [nombre, apellido].filter(Boolean).join(' ')
+  const lines = [
+    `Hola, soy ${fullName}.`,
+    '',
+    'Me gustaría recibir una oferta personalizada para ahorrar en mi factura.',
+    '',
+    `📞 Teléfono: ${movil}`,
+  ]
+
+  if (correo) lines.push(`📧 Correo: ${correo}`)
+  if (mensaje) lines.push('', '💬 Mensaje:', mensaje)
+  if (hasInvoice) lines.push('', '📎 También he enviado mi factura a través del formulario.')
+
+  lines.push('', 'He enviado esta solicitud desde la web de Ahorra Sin Líos.')
+
+  return lines.join('\n')
+}
+
+const setupContactForm = () => {
+  const form = hostRef.value?.querySelector('.ahorra-scope-form form.form')
+
+  if (!form) return
+
+  const button = form.querySelector('button[type="submit"]')
+  const status = form.querySelector('[data-contact-status]')
+  const invoiceInput = form.elements.factura
+  const idleButtonText = button.textContent.trim()
+
+  const showStatus = (message, state) => {
+    status.textContent = message
+    status.dataset.state = state
+    status.hidden = false
+  }
+
+  const validateInvoice = () => {
+    const invoice = invoiceInput.files?.[0]
+
+    invoiceInput.setCustomValidity('')
+    if (!invoice) return true
+
+    const extension = invoice.name.split('.').pop()?.toLowerCase()
+    if (
+      invoice.size > MAX_INVOICE_SIZE ||
+      !ALLOWED_INVOICE_TYPES.includes(invoice.type) ||
+      !ALLOWED_INVOICE_EXTENSIONS.includes(extension)
+    ) {
+      invoiceInput.setCustomValidity(
+        invoice.size > MAX_INVOICE_SIZE
+          ? 'La factura no puede superar los 10 MB.'
+          : 'La factura debe ser PDF, JPG, PNG o WEBP.'
+      )
+      return false
+    }
+
+    return true
+  }
+
+  const handleInvoiceChange = () => {
+    validateInvoice()
+    invoiceInput.reportValidity()
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    status.hidden = true
+
+    if (!validateInvoice() || !form.reportValidity()) return
+
+    button.disabled = true
+    button.textContent = 'Enviando...'
+    form.setAttribute('aria-busy', 'true')
+
+    try {
+      const response = await fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: new FormData(form),
+      })
+      const payload = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        const validationMessage = Object.values(payload.errors ?? {}).flat()[0]
+        const requestError = new Error('Contact request failed')
+        requestError.userMessage =
+          response.status === 422
+            ? validationMessage
+            : response.status === 503
+              ? payload.message
+              : null
+        throw requestError
+      }
+
+      const values = new FormData(form)
+      const message = buildWhatsAppMessage({
+        nombre: values.get('nombre').trim(),
+        apellido: values.get('apellido').trim(),
+        correo: values.get('correo').trim(),
+        movil: values.get('movil').trim(),
+        mensaje: values.get('mensaje').trim(),
+        hasInvoice: Boolean(invoiceInput.files?.length),
+      })
+
+      showStatus('Solicitud enviada correctamente. Abriendo WhatsApp...', 'success')
+      window.setTimeout(() => {
+        window.location.assign(`${WHATSAPP_URL}?text=${encodeURIComponent(message)}`)
+      }, 500)
+    } catch (error) {
+      showStatus(
+        error.userMessage ||
+          'No hemos podido enviar tu solicitud. Inténtalo de nuevo en unos segundos.',
+        'error'
+      )
+      button.disabled = false
+      button.textContent = idleButtonText
+      form.removeAttribute('aria-busy')
+    }
+  }
+
+  invoiceInput.addEventListener('change', handleInvoiceChange)
+  form.addEventListener('submit', handleSubmit)
+
+  contactFormCleanup = () => {
+    invoiceInput.removeEventListener('change', handleInvoiceChange)
+    form.removeEventListener('submit', handleSubmit)
+  }
+}
+
 onMounted(() => {
   setupProcessStepReveal()
+  setupContactForm()
 })
 
 onBeforeUnmount(() => {
   processStepObserver?.disconnect()
+  contactFormCleanup?.()
 })
 
 const AHORRA_NEW_SECTIONS_STYLES = `
@@ -2131,37 +2268,37 @@ const markup = `<div class="ahorra-page">
               </div>
 
               <div class="form-panel">
-                <form class="form" action="#" method="post" enctype="multipart/form-data">
+                <form class="form" action="/api/contact" method="post" enctype="multipart/form-data">
                   <div class="grid-2">
                     <label>
                       Nombre
-                      <input type="text" name="name" autocomplete="given-name" />
+                      <input type="text" name="nombre" autocomplete="given-name" maxlength="100" required />
                     </label>
 
                     <label>
                       Apellido
-                      <input type="text" name="surname" autocomplete="family-name" />
+                      <input type="text" name="apellido" autocomplete="family-name" maxlength="100" />
                     </label>
                   </div>
 
                   <label>
                     Correo
-                    <input type="email" name="email" autocomplete="email" required />
+                    <input type="email" name="correo" autocomplete="email" maxlength="254" />
                   </label>
 
                   <label>
                     Móvil
-                    <input type="tel" name="phone" autocomplete="tel" />
+                    <input type="tel" name="movil" autocomplete="tel" maxlength="30" required />
                   </label>
 
                   <label>
                     Tu mensaje
-                    <textarea name="message"></textarea>
+                    <textarea name="mensaje" maxlength="5000"></textarea>
                   </label>
 
                   <div class="upload-row">
                     <label class="upload">
-                      <input type="file" name="bill" accept=".pdf,.jpg,.jpeg,.png" />
+                      <input type="file" name="factura" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" />
                       <span class="upload-icon">↑</span>
                       <span>
                         <strong>Subir factura</strong>
@@ -2173,16 +2310,19 @@ const markup = `<div class="ahorra-page">
                   </div>
 
                   <label class="consent">
-                    <input type="checkbox" required />
+                    <input type="checkbox" name="privacidad" value="1" required />
                     <span>
                       He leído y acepto los términos, las condiciones de uso y la Política de
                       Privacidad.
                     </span>
                   </label>
 
+                  <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+
                   <button class="btn" type="submit">
                     Hablar con Ahorra Sin Líos
                   </button>
+                  <p data-contact-status role="status" aria-live="polite" hidden></p>
                 </form>
               </div>
             </div>
