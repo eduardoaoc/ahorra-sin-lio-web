@@ -840,6 +840,11 @@ const setupContactForm = () => {
     button.disabled = true
     button.textContent = 'Enviando...'
     form.setAttribute('aria-busy', 'true')
+    const whatsappWindow = window.open('about:blank', '_blank')
+
+    if (whatsappWindow) {
+      whatsappWindow.opener = null
+    }
 
     try {
       const response = await fetch(CONTACT_ENDPOINT, {
@@ -873,9 +878,18 @@ const setupContactForm = () => {
 
       showStatus('Solicitud enviada correctamente. Abriendo WhatsApp...', 'success')
       window.setTimeout(() => {
-        window.location.assign(`${WHATSAPP_URL}?text=${encodeURIComponent(message)}`)
+        const whatsappTarget = `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`
+
+        if (whatsappWindow && !whatsappWindow.closed) {
+          whatsappWindow.location.replace(whatsappTarget)
+          return
+        }
+
+        const fallbackWindow = window.open(whatsappTarget, '_blank', 'noopener,noreferrer')
+        if (!fallbackWindow) window.location.assign(whatsappTarget)
       }, 500)
     } catch (error) {
+      whatsappWindow?.close()
       showStatus(
         error.userMessage ||
           'No hemos podido enviar tu solicitud. Inténtalo de nuevo en unos segundos.',
