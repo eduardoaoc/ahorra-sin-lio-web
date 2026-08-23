@@ -1,0 +1,19 @@
+Options -Indexes
+
+DirectoryIndex frontend/dist/index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Do not expose application source or rewrite files already being served.
+    RewriteRule ^(?:backend|frontend/(?:src|node_modules))(?:/|$) - [F,L,NC]
+    RewriteRule ^frontend/dist/ - [L,NC]
+
+    # Serve Vite's generated assets from frontend/dist at the domain root.
+    RewriteCond %{DOCUMENT_ROOT}/frontend/dist/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/frontend/dist/$1 -d
+    RewriteRule ^(.+)$ frontend/dist/$1 [L]
+
+    # Vue history fallback.
+    RewriteRule ^ frontend/dist/index.html [L]
+</IfModule>

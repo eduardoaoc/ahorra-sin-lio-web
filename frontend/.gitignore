@@ -9,7 +9,8 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-dist
+# The Hostinger Git deployment serves the production bundle from dist,
+# so this directory must remain versioned in this repository.
 dist-ssr
 coverage
 *.local
