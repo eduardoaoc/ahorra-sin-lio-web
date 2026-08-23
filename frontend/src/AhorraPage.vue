@@ -764,6 +764,10 @@ const setupProcessStepReveal = () => {
 
 const CONTACT_ENDPOINT = '/api/contact'
 const WHATSAPP_URL = 'https://wa.me/34671941990'
+const buildPlanWhatsAppUrl = (planName) =>
+  `${WHATSAPP_URL}?text=${encodeURIComponent(
+    `Hola, me gustaría recibir más información sobre el ${planName}.`
+  )}`
 const MAX_INVOICE_SIZE = 10 * 1024 * 1024
 const ALLOWED_INVOICE_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
 const ALLOWED_INVOICE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp']
@@ -2183,7 +2187,7 @@ const markup = `<div class="ahorra-page">
                     <div class="plan-perk"><div class="plan-perk-icon" aria-hidden="true">→</div><div><strong>Invita a un amigo</strong><span>Compártele nuestro servicio de forma sencilla.</span></div></div>
                     <div class="plan-perk"><div class="plan-perk-icon" aria-hidden="true">★</div><div><strong>Consigue tu regalo</strong><span>Si se hace cliente, recibirás una recompensa.</span></div></div>
                   </div>
-                  <div class="plan-cta"><a href="#quote-title" class="plan-btn">Invitar a un amigo</a></div><div class="plan-note">Premiamos tus recomendaciones.</div>
+                  <div class="plan-cta"><a href="${buildPlanWhatsAppUrl('Plan Amigo')}" class="plan-btn" target="_blank" rel="noopener noreferrer">Invitar a un amigo</a></div><div class="plan-note">Premiamos tus recomendaciones.</div>
                 </article>
                 <article class="plan-card dark">
                   <div class="plan-decor one" aria-hidden="true"></div><div class="plan-decor two" aria-hidden="true"></div>
@@ -2195,7 +2199,7 @@ const markup = `<div class="ahorra-page">
                     <div class="plan-perk"><div class="plan-perk-icon" aria-hidden="true">↻</div><div><strong>Revisión anual de precios</strong><span>Buscamos siempre mejores condiciones para ti.</span></div></div>
                     <div class="plan-perk"><div class="plan-perk-icon" aria-hidden="true">◆</div><div><strong>Regalos que mejoran con el tiempo</strong><span>Tu antigüedad se convierte en mejores recompensas.</span></div></div>
                   </div>
-                  <div class="plan-cta"><a href="#quote-title" class="plan-btn">Quiero mis ventajas</a></div><div class="plan-note">Más tiempo contigo. Más valor para ti.</div>
+                  <div class="plan-cta"><a href="${buildPlanWhatsAppUrl('Plan Fidelización')}" class="plan-btn" target="_blank" rel="noopener noreferrer">Quiero mis ventajas</a></div><div class="plan-note">Más tiempo contigo. Más valor para ti.</div>
                 </article>
               </div>
             </div>
