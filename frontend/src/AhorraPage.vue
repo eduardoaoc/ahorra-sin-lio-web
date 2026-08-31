@@ -1031,8 +1031,8 @@ const markup = `<div class="ahorra-page">
                 </nav>
 
                 <div class="header-actions">
-                  <a class="phone" href="tel:+34900877155">
-                    <span>Atención al cliente</span>900 877 155
+                  <a class="phone" href="tel:+34671941990">
+                    <span>Atención al cliente</span>+34 671 941 990
                   </a>
                   <a class="client-btn" href="https://wa.me/+34671941990">
                     Área Cliente
@@ -1082,7 +1082,7 @@ const markup = `<div class="ahorra-page">
                 </div>
                 <div class="footer-right">
                   <strong>Estamos a solo una llamada de distancia</strong>
-                  <a href="tel:+34900877155">900 877 155</a>
+                  <a href="tel:+34671941990">+34 671 941 990</a>
                 </div>
               </footer>
             </div>
@@ -2460,7 +2460,10 @@ const markup = `<div class="ahorra-page">
             </div>
           </footer>
         </div>
-      </div>`
+      </div>`.replace(
+  /src="data:image\/png;base64,[^"]+"/g,
+  'src="/AhorraSinLio.png"',
+)
 </script>
 
 <template>
